@@ -1,0 +1,44 @@
+name: Pnpm release
+description: Permit to sync last changes from another repository
+inputs:
+  pnpm-version:
+    description: |
+      Version of pnpm to install.
+      Optional when there is a packageManager field in the package.json.
+      otherwise, this field is required It supports npm versioning scheme, it could be an exact version (such as 6.24.1), or a version range (such as 6, 6.x.x, 6.24.x, ^6.24.1, *, etc.), or latest.
+  node-version:
+    description: |
+      Version Spec of the version to use in SemVer notation.
+      It also emits such aliases as lts, latest, nightly and canary builds
+      Examples: 12.x, 10.15.1, >=10.15.0, lts/Hydrogen, 16-nightly, latest, node
+  branches:
+    description: |
+      The branches on which releases should happen.
+      See https://github.com/90dy/gha-semantic-release for more details.
+    default: main
+
+runs:
+  using: composite
+  steps:
+
+  - uses: pnpm/action-setup@v2
+    with:
+      version: ${{ inputs.pnpm-version }}}
+
+  - uses: actions/setup-node@v2
+    with:
+      node-version: ${{ inputs.node-version }}
+      cache: pnpm
+
+  - shell: bash
+    run: pnpm install
+
+  - uses: 90dy/gha-semantic-release@main
+    with:
+      branches: ${{ inputs.branches }}
+      plugins: |
+        @semantic-release/commit-analyzer
+        @semantic-release/release-notes-generator
+        @semantic-release/npm
+        @semantic-release/github
+        @semantic-release/git
