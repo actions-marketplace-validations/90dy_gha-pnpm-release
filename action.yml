@@ -6,6 +6,7 @@ inputs:
       Version of pnpm to install.
       Optional when there is a packageManager field in the package.json.
       otherwise, this field is required It supports npm versioning scheme, it could be an exact version (such as 6.24.1), or a version range (such as 6, 6.x.x, 6.24.x, ^6.24.1, *, etc.), or latest.
+    default: latest
   node-version:
     description: |
       Version Spec of the version to use in SemVer notation.
@@ -16,22 +17,45 @@ inputs:
       The branches on which releases should happen.
       See https://github.com/90dy/gha-semantic-release for more details.
     default: main
+  cache:
+    description: |
+      Cache pnpm store.
+      Examples: true, false
+    default: 'true'
 
 runs:
   using: composite
   steps:
-
   - uses: pnpm/action-setup@v2
     with:
-      version: ${{ inputs.pnpm-version }}}
+      version: ${{ inputs.pnpm-version }}
 
   - uses: actions/setup-node@v2
     with:
       node-version: ${{ inputs.node-version }}
       cache: pnpm
 
+  - name: Get pnpm store directory
+    shell: bash
+    run: |
+      echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+  - uses: actions/cache@v3
+    name: Setup pnpm cache
+    if: ${{ inputs.cache != 'false' }}
+    with:
+      path: ${{ env.STORE_PATH }}
+      key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+      restore-keys: |
+        ${{ runner.os }}-pnpm-store-
+
   - shell: bash
     run: pnpm install
+
+  # - name: Prevent npm incompatibility with semantic-release (see https://github.com/semantic-release/semantic-release/issues/2530#issuecomment-1237864508)
+  #   shell: bash
+  #   run: |
+  #     echo 'no-workspaces-update=true' >> .npmrc
 
   - uses: 90dy/gha-semantic-release@main
     with:
