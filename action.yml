@@ -52,11 +52,6 @@ runs:
   - shell: bash
     run: pnpm install
 
-  # - name: Prevent npm incompatibility with semantic-release (see https://github.com/semantic-release/semantic-release/issues/2530#issuecomment-1237864508)
-  #   shell: bash
-  #   run: |
-  #     echo 'no-workspaces-update=true' >> .npmrc
-
   - uses: 90dy/gha-semantic-release@main
     with:
       branches: ${{ inputs.branches }}
