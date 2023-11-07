@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/90dy/gha-pnpm-release/compare/v1.0.0...v1.0.1) (2023-11-07)
+
+
+### Bug Fixes
+
+* action name ([eb79f72](https://github.com/90dy/gha-pnpm-release/commit/eb79f720906d97f56c926261e8e8fcf9b6591a1f))
+
 # 1.0.0 (2023-11-02)
 
 
