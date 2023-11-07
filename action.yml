@@ -1,4 +1,4 @@
-name: Pnpm release
+name: Pnpm Release Github Action from 90dy
 description: Permit to sync last changes from another repository
 inputs:
   pnpm-version:
